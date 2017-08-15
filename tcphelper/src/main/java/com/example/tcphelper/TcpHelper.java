@@ -100,9 +100,9 @@ public abstract class TcpHelper {
                 if (timeOutEnable==true)  socket.setSoTimeout(MaxRecieveTimeOut); //20秒
                 createInStream();
                 createOutStream();
-                if (timeOutEnable==false) {
+                //if (timeOutEnable==false) {
                      connectSuccess();
-                }
+                //}
             } catch (SocketException se) {
                 //中断
                 //se.printStackTrace();
