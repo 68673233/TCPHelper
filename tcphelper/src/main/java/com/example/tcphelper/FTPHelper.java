@@ -16,17 +16,55 @@ import java.io.RandomAccessFile;
  * Created by liwb on 2017/8/15.
  */
 
-public class FTPHelper {
+public abstract class FTPHelper {
     private FTPClient ftpClient = null;
-    private String IP="192.168.3.2";
+
+    //region 属性
+    private String IP="192.168.1.254";
     private int Port=21;
-    private String userName="",Password="";
+    private String userName="root",Password="micsig";
 
-    public String rootPath="";
+    public void setIP(String IP) {
+        this.IP = IP;
+    }
+
+    public void setPort(int port) {
+        Port = port;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public void setPassword(String password) {
+        Password = password;
+    }
+
+    //endregion
+    public String localRootPath="/mnt/sdcard/me0919/";
+
+    //region override
+
+    /**
+     * 当前下载，上传进度比
+      * @param currPos
+     */
+    public abstract void currProcess(long currPos);
+
+    /**
+     * 服务器端文件不存在。
+     */
+    public abstract void errorServiceFileNotExist();
 
 
-    public FTPHelper() {
+    //endregion
+
+    public FTPHelper(String IP,int port ,String userName,String password) {
         ftpClient = new FTPClient();
+        this.setIP(IP);
+        this.setPort(port);
+        this.setUserName(userName);
+        this.setPassword(password);
     }
 
     // 连接到ftp服务器
@@ -122,6 +160,7 @@ public class FTPHelper {
                 process = currentSize / step;
                 if (process % 10 == 0) {
                     System.out.println("上传进度：" + process);
+                    currProcess(process);
                 }
             }
         }
@@ -144,10 +183,12 @@ public class FTPHelper {
         FTPFile[] files = ftpClient.listFiles(serverPath);
         if (files.length == 0) {
             System.out.println("服务器文件不存在");
+            errorServiceFileNotExist();
             return false;
         }
         System.out.println("远程文件存在,名字为：" + files[0].getName());
-        localPath = localPath + files[0].getName();
+        String[] s=files[0].getName().split("/");
+        localPath = localPath + "/"+s[s.length-1];
         // 接着判断下载的文件是否能断点下载
         long serverSize = files[0].getSize(); // 获取远程文件的长度
         File localFile = new File(localPath);
@@ -181,6 +222,7 @@ public class FTPHelper {
                 process = currentSize / step;
                 if (process % 10 == 0) {
                     System.out.println("下载进度：" + process);
+                    currProcess(process);
                 }
             }
         }
@@ -205,45 +247,46 @@ public class FTPHelper {
     }
 
 
-    // 上传例子
-    private void ftpUpload() {
-        new Thread() {
-            public void run() {
-                try {
-                    System.out.println("正在连接ftp服务器....");
-                    FTPHelper ftpHelper = new FTPHelper();
-                    if (ftpHelper.connect()) {
-                        if (ftpHelper.uploadFile(ftpHelper.rootPath + "UpdateXZMarketPlatform.apk", "mnt/sdcard/")) {
-                            ftpHelper.closeFTP();
-                        }
-                    }
-                } catch (Exception e) {
-                    // TODO: handle exception
-                    // System.out.println(e.getMessage());
-                }
-            }
-        }.start();
-    }
+//    // 上传例子
+//    private void ftpUpload() {
+//        new Thread() {
+//            public void run() {
+//                try {
+//                    System.out.println("正在连接ftp服务器....");
+//                    FTPHelper ftpHelper = new FTPHelper();
+//                    if (ftpHelper.connect()) {
+//                        if (ftpHelper.uploadFile(ftpHelper.localRootPath+"softwareParam.txt", "/mnt/sdcard/" )) {
+//                            ftpHelper.closeFTP();
+//                            System.out.println("上传文件成功！");
+//                        }
+//                    }
+//                } catch (Exception e) {
+//                    // TODO: handle exception
+//                    // System.out.println(e.getMessage());
+//                }
+//            }
+//        }.start();
+//    }
 
-    // 下载例子
-    private void ftpDownload() {
-        new Thread() {
-            public void run() {
-                try {
-                    System.out.println("正在连接ftp服务器....");
-                    FTPHelper ftpHelper = new FTPHelper();
-                    if (ftpHelper.connect()) {
-                        if (ftpHelper.downloadFile(ftpHelper.rootPath, "20120723_XFQ07_XZMarketPlatform.db")) {
-                            ftpHelper.closeFTP();
-                        }
-                    }
-                } catch (Exception e) {
-                    // TODO: handle exception
-                    // System.out.println(e.getMessage());
-                }
-            }
-        }.start();
-    }
+//    // 下载例子
+//    private void ftpDownload() {
+//        new Thread() {
+//            public void run() {
+//                try {
+//                    System.out.println("正在连接ftp服务器....");
+//                    FTPHelper ftpHelper = new FTPHelper();
+//                    if (ftpHelper.connect()) {
+//                        if (ftpHelper.downloadFile(ftpHelper.localRootPath, "20120723_XFQ07_XZMarketPlatform.db")) {
+//                            ftpHelper.closeFTP();
+//                        }
+//                    }
+//                } catch (Exception e) {
+//                    // TODO: handle exception
+//                    // System.out.println(e.getMessage());
+//                }
+//            }
+//        }.start();
+//    }
 
 
     /**

@@ -2,6 +2,27 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.liwb.tcphelperdemo">
 
+    <!--允许应用打开网络套接口 -->
+    <uses-permission android:name="android.permission.INTERNET"/>
+
+    <!--允许应用访问关于Wi-Fi网络的信息 -->
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+
+    <!-- 允许应用写用户的外部存储器 -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+
+    <!-- 允许应用进入Wi-Fi的组播方式 -->
+    <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
+
+    <!-- 允许应用改变Wi-Fi的连接状态 -->
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
+
+    <!-- 允许应用改变网络的连接状态 -->
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE"/>
+
+    <!-- 允许应用访问网络上的信息 -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
